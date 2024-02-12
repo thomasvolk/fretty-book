@@ -9,6 +9,7 @@ from os.path import join, dirname, abspath
 
 SETUP_DIR = dirname(abspath(__file__))
 PROJECT_URL = 'https://github.com/thomasvolk/fretty-book'
+PROJECT_FILES_URL = 'https://raw.githubusercontent.com/thomasvolk/fretty-book'
 
 with open(join(SETUP_DIR, 'fretty_book', '__init__.py')) as f:
     VERSION = re.search("__version__\s=\s'(.*)'", f.read()).group(1)
@@ -22,6 +23,7 @@ def project_test_suite():
 
 with open('README.md') as f:
     long_description = f.read()
+    long_description = long_description.replace('<img src="example/', f'<img src="{PROJECT_FILES_URL}/master/example/')
 
 
 setup(
