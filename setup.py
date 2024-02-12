@@ -26,7 +26,7 @@ with open('README.md') as f:
 
 setup(
     name='fretty-book',
-    description='fretty-book can replace fretty markup with images',
+    description='fretty-book can replace inline fretty markup within documents with the generated images',
     long_description=long_description,
     long_description_content_type="text/markdown",
     version=VERSION,
@@ -44,7 +44,8 @@ setup(
         'console_scripts': ['fretty-book=fretty_book:main'],
     },
     install_requires=[
-        "fretty[PNG]"
+        "fretty[PNG]",
+        "lxml"
     ],
     url=PROJECT_URL,
     license='Apache',

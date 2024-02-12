@@ -20,6 +20,11 @@ test: $(FRETTY_BOOK)
 	@echo "check help ..."
 	$(FRETTY_BOOK) -v
 	$(FRETTY_BOOK) -h
+	@echo "process documents ..."
+	mkdir -p out/html
+	$(FRETTY_BOOK) example/document.html -o out/html/document.html
+	mkdir -p out/xhtml
+	$(FRETTY_BOOK) example/document.xhtml -o out/html/document.xhtml
 
 build: test
 	$(PYTHON) -m build --wheel
