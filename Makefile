@@ -7,7 +7,6 @@ TWINE=./venv/bin/twine
 
 venv:
 	python3 -m venv venv
-	$(PYTHON) -m pip install fretty[PNG]
 	$(PYTHON) -m pip install build
 	$(PYTHON) -m pip install twine
 	
@@ -22,9 +21,9 @@ test: $(FRETTY_BOOK)
 	$(FRETTY_BOOK) -h
 	@echo "process documents ..."
 	mkdir -p out/html
-	$(FRETTY_BOOK) example/document.html -o out/html/document.html
+	$(FRETTY_BOOK) -V example/document.html -o out/html/document.html
 	mkdir -p out/xhtml
-	$(FRETTY_BOOK) example/document.xhtml -o out/html/document.xhtml
+	$(FRETTY_BOOK) -V example/document.xhtml -o out/html/document.xhtml
 
 build: test
 	$(PYTHON) -m build --wheel

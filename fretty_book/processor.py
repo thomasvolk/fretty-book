@@ -20,15 +20,10 @@ class DoumentProcessor:
 
     def process_file(self, input_file):
         with open(input_file) as f:
-            self.process_text(f.read())
+            return self.process_text(f.read())
 
     def process_text(self, input):
-        output = self._process(input)
-        if self.output_file:
-            with open(self.output_file, 'w') as o:
-                o.write(output)
-        else:
-            print(output)
+        return self._process(input)
 
     def _process(self, input):
         return input
@@ -52,7 +47,7 @@ class HTMLDoumentProcessor(DoumentProcessor):
             if self.embedded:
                 replace_node = lxml.html.fromstring(svg)
             else:
-                image_file = write_image(f"fretty-{count}.{self.image_extension}", svg, as_png=self.png_images, target_path=self.document_dir)
+                image_file = write_image(f"fretty-{count}.{self.image_extension}", svg, target_path=self.document_dir)
                 replace_node = lxml.html.fromstring(f'<img src="{image_file}" />')
             node.getparent().replace(node, replace_node)
             count += 1
@@ -76,7 +71,7 @@ class XHTMLDoumentProcessor(DoumentProcessor):
             if self.embedded:
                 replace_node = parseString(svg)
             else:
-                image_file = write_image(f"fretty-{count}.{self.image_extension}", svg, as_png=self.png_images, target_path=self.document_dir)
+                image_file = write_image(f"fretty-{count}.{self.image_extension}", svg, target_path=self.document_dir)
                 replace_node = parseString(f'<img src="{image_file}" />')
             node.parentNode.replaceChild(replace_node.documentElement, node)
             count += 1
