@@ -19,7 +19,7 @@ test: $(FRETTY_BOOK)
 	@echo "check help ..."
 	$(FRETTY_BOOK) -v
 	$(FRETTY_BOOK) -h
-	$(FRETTY_BOOK) --embed example/document.html
+	$(FRETTY_BOOK) --embed example/example.html
 	@echo "process documents ..."
 	mkdir -p out/html
 	$(FRETTY_BOOK) -V example/document.html -o out/html/document.html
