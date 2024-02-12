@@ -8,12 +8,16 @@ fretty-book can replace inline [fretty](https://github.com/thomasvolk/fretty) ma
 
 ## Usage
 
-    fretty-book example/document.html -o out/document.html
+    fretty-book example/simple.html -o out/simple.html
 
 
 ## Markup
 
+fretty-book can process HTML and XHTML documents. All `<fretty>` tags will be replaced with the image generated with the included markup. 
+
 ### html
+
+This markup ...
 
 ```
 <!DOCTYPE html>
@@ -23,7 +27,7 @@ fretty-book can replace inline [fretty](https://github.com/thomasvolk/fretty) ma
     </head>
     <body>
 
-        <h1>Fretty test document for html processing</h1>
+        <h3>Fretty test document for html processing</h3>
 
         <p>Tabs for C major scale</p>
         <fretty width="400">
@@ -38,3 +42,14 @@ fretty-book can replace inline [fretty](https://github.com/thomasvolk/fretty) ma
     </body>
 </html>
 ```
+will produce this result:
+
+---
+
+<h3>Fretty test document for html processing</h3>
+
+<p>Tabs for C major scale</p>
+
+<img src="example/simple/fretty-0.svg"/>
+
+---

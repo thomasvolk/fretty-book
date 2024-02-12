@@ -19,8 +19,11 @@ test: $(FRETTY_BOOK)
 	@echo "check help ..."
 	$(FRETTY_BOOK) -v
 	$(FRETTY_BOOK) -h
-	$(FRETTY_BOOK) --embed example/example.html
+	$(FRETTY_BOOK) --embed example/simple.html
 	@echo "process documents ..."
+	$(FRETTY_BOOK) -V example/simple.html -o out/simple.html
+	diff out/simple.html example/simple/simple.html
+	test -f out/fretty-0.svg
 	mkdir -p out/html
 	$(FRETTY_BOOK) -V example/document.html -o out/html/document.html
 	mkdir -p out/html-embed
