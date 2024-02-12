@@ -23,7 +23,7 @@ test: $(FRETTY_BOOK)
 	mkdir -p out/html
 	$(FRETTY_BOOK) -V example/document.html -o out/html/document.html
 	mkdir -p out/xhtml
-	$(FRETTY_BOOK) -V example/document.xhtml -o out/html/document.xhtml
+	$(FRETTY_BOOK) -V example/document.xhtml -o out/xhtml/document.xhtml
 
 build: test
 	$(PYTHON) -m build --wheel
