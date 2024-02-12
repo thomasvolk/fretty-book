@@ -8,7 +8,7 @@ fretty-book can replace inline [fretty](https://github.com/thomasvolk/fretty) ma
 
 ## Usage
 
-    fretty-book example/simple.html -o out/simple.html
+    fretty-book example/simple.html -o simple.html
 
 
 ## Markup
