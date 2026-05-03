@@ -42,7 +42,9 @@ class HTMLDoumentProcessor(DoumentProcessor):
                 lines,
                 width=node.get('width'),
                 height=node.get('height'),
-                embedded=self.embedded
+                embedded=self.embedded,
+                drawing_color=node.get('drawing_color', 'black'),
+                label_color=node.get('label_color', 'white'),
             )
             if self.embedded:
                 replace_node = lxml.html.fromstring(svg)
@@ -66,7 +68,9 @@ class XHTMLDoumentProcessor(DoumentProcessor):
                 lines,
                 width=node.getAttribute('width'),
                 height=node.getAttribute('height'),
-                embedded=self.embedded
+                embedded=self.embedded,
+                drawing_color=node.getAttribute('drawing_color') or 'black',
+                label_color=node.getAttribute('label_color') or 'white',
             )
             if self.embedded:
                 replace_node = parseString(svg)

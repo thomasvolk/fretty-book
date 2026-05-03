@@ -46,7 +46,7 @@ setup(
         'console_scripts': ['fretty-book=fretty_book:main'],
     },
     install_requires=[
-        "fretty[PNG]",
+        "fretty[PNG]>=2.1.0",
         "lxml"
     ],
     url=PROJECT_URL,

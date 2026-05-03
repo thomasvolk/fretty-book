@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from .processor import HTMLDoumentProcessor, XHTMLDoumentProcessor
 
-__version__ = '0.1'
+__version__ = '0.2'
 
 
 _processors = {
