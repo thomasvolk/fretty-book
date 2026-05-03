@@ -1,20 +1,8 @@
 all: test
 
-PYTHON=./venv/bin/python3
-FRETTY_BOOK=./venv/bin/fretty-book
-TWINE=./venv/bin/twine
+FRETTY_BOOK=python -m fretty_book
 
-
-venv:
-	python3 -m venv venv
-	$(PYTHON) -m pip install build
-	$(PYTHON) -m pip install twine
-	
-
-$(FRETTY_BOOK): venv
-	$(PYTHON) -m pip install -e .
-
-test: $(FRETTY_BOOK)
+test:
 	mkdir -p out
 	@echo "check help ..."
 	$(FRETTY_BOOK) -v
@@ -38,13 +26,20 @@ test: $(FRETTY_BOOK)
 	$(FRETTY_BOOK) -V --embed example/document.xhtml -o out/xhtml-embed/document.xhtml
 
 build: test
-	$(PYTHON) -m build --wheel
+	pip install build
+	python -m build --wheel
+
+install:
+	pip install -r requirements.txt
+	python -m pip install -e .
 
 upload: build
-	PYTHONIOENCODING=utf-8 $(TWINE) upload --repository pypi dist/*
+	pip install twine
+	PYTHONIOENCODING=utf-8 twine upload --repository pypi dist/*
 
 upload-test: build
-	PYTHONIOENCODING=utf-8 $(TWINE) upload --repository testpypi dist/*
+	pip install twine
+	PYTHONIOENCODING=utf-8 twine upload --repository testpypi dist/*
 
 clean:
 	rm -rf out build dist *.egg-info venv
