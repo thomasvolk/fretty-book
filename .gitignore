@@ -8,3 +8,4 @@ dist
 __pycache__
 /simple.html
 /fretty-0.svg
+*.allium
