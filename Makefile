@@ -24,6 +24,14 @@ test:
 	$(FRETTY_BOOK) -V --png example/document.xhtml -o out/xhtml-png/document.xhtml
 	mkdir -p out/xhtml-embed
 	$(FRETTY_BOOK) -V --embed example/document.xhtml -o out/xhtml-embed/document.xhtml
+	mkdir -p out/markdown
+	$(FRETTY_BOOK) -V example/document.md -o out/markdown/document.md
+	mkdir -p out/markdown-png
+	$(FRETTY_BOOK) -V --png example/document.md -o out/markdown-png/document.md
+	mkdir -p out/org
+	$(FRETTY_BOOK) -V example/document.org -o out/org/document.org
+	mkdir -p out/org-png
+	$(FRETTY_BOOK) -V --png example/document.org -o out/org-png/document.org
 
 build: test
 	pip install build

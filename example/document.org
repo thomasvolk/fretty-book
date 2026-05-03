@@ -1,0 +1,38 @@
+#+title: Fretty test document for Org-mode processing
+#+author: Thomas Volk
+
+* C major scale
+
+#+begin_src fretty :width 400 :drawing_color blue :label_color red
+III
+--o-o1
+--oo-o
+-o1-o-
+o-o-o-
+1-o-o-
+o-o-o-
+#+end_src
+
+* C major box I version 2
+
+#+begin_src fretty :width 400
+II
+-#-o-o1
+-#-oo-o
+#-o1-o-
+#o-o-o-
+#1-o-o-
+-o-o-o-
+#+end_src
+
+* C major box II
+
+#+begin_src fretty :width 400
+VII
+##-o-oo
+-#o-o1
+#-oo-o-
+#-o1-o-
+#o-o-o-
+#1-o-o-
+#+end_src

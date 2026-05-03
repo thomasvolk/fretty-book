@@ -1,10 +1,11 @@
 # -*- coding: utf-8 -*-
 
+import re
 from fretty import generate_svg, write_image
 import os
 
 
-class DoumentProcessor:
+class DocumentProcessor:
     def __init__(self, embedded=True, png_images=False, output_file=None):
         self.embedded = embedded
         self.png_images = png_images
@@ -12,7 +13,7 @@ class DoumentProcessor:
 
     @property
     def document_dir(self):
-        return os.path.dirname(self.output_file)
+        return os.path.dirname(self.output_file) if self.output_file else '.'
 
     @property
     def image_extension(self):
@@ -27,56 +28,97 @@ class DoumentProcessor:
 
     def _process(self, input):
         return input
-    
 
-class HTMLDoumentProcessor(DoumentProcessor):
+    def _generate(self, markup, attrs):
+        lines = markup.strip().split('\n')
+        return generate_svg(
+            lines,
+            width=attrs.get('width'),
+            height=attrs.get('height'),
+            embedded=self.embedded,
+            drawing_color=attrs.get('drawing_color', 'black'),
+            label_color=attrs.get('label_color', 'white'),
+        )
 
+    def _external_image(self, index, svg):
+        name = f"fretty-{index}.{self.image_extension}"
+        return write_image(name, svg, target_path=self.document_dir)
+
+
+class HTMLDocumentProcessor(DocumentProcessor):
     def _process(self, html_input):
         import lxml.html
 
         doc = lxml.html.document_fromstring(html_input)
-        count = 0
-        for node in doc.findall(".//fretty"):
-            lines = node.text.strip().split("\n")
-            svg = generate_svg(
-                lines,
-                width=node.get('width'),
-                height=node.get('height'),
-                embedded=self.embedded,
-                drawing_color=node.get('drawing_color', 'black'),
-                label_color=node.get('label_color', 'white'),
-            )
+        for idx, node in enumerate(doc.findall(".//fretty")):
+            svg = self._generate(node.text, dict(node.attrib))
             if self.embedded:
                 replace_node = lxml.html.fromstring(svg)
             else:
-                image_file = write_image(f"fretty-{count}.{self.image_extension}", svg, target_path=self.document_dir)
-                replace_node = lxml.html.fromstring(f'<img src="{image_file}" />')
+                replace_node = lxml.html.fromstring(f'<img src="{self._external_image(idx, svg)}" />')
             node.getparent().replace(node, replace_node)
-            count += 1
         return lxml.html.tostring(doc, encoding='unicode')
-    
 
-class XHTMLDoumentProcessor(DoumentProcessor):
+
+class XHTMLDocumentProcessor(DocumentProcessor):
     def _process(self, xhtml_input):
         from xml.dom.minidom import parseString
 
         dom = parseString(xhtml_input)
-        count = 0
-        for node in dom.getElementsByTagName("fretty"):
-            lines = [l for child in node.childNodes for l in child.data.strip().split("\n")]
-            svg = generate_svg(
-                lines,
-                width=node.getAttribute('width'),
-                height=node.getAttribute('height'),
-                embedded=self.embedded,
-                drawing_color=node.getAttribute('drawing_color') or 'black',
-                label_color=node.getAttribute('label_color') or 'white',
-            )
+        for idx, node in enumerate(list(dom.getElementsByTagName("fretty"))):
+            markup = ''.join(child.data for child in node.childNodes)
+            attrs = {node.attributes.item(i).name: node.attributes.item(i).value
+                     for i in range(node.attributes.length)}
+            svg = self._generate(markup, attrs)
             if self.embedded:
                 replace_node = parseString(svg)
             else:
-                image_file = write_image(f"fretty-{count}.{self.image_extension}", svg, target_path=self.document_dir)
-                replace_node = parseString(f'<img src="{image_file}" />')
+                replace_node = parseString(f'<img src="{self._external_image(idx, svg)}" />')
             node.parentNode.replaceChild(replace_node.documentElement, node)
-            count += 1
         return dom.toxml()
+
+
+class MarkdownDocumentProcessor(DocumentProcessor):
+    _BLOCK = re.compile(r'```fretty([^\n]*)\n(.*?)```', re.DOTALL)
+
+    @staticmethod
+    def _parse_attrs(attr_str):
+        return dict(re.findall(r'(\w+)=(\S+)', attr_str))
+
+    def _process(self, text):
+        count = 0
+
+        def replace(m):
+            nonlocal count
+            attrs = self._parse_attrs(m.group(1))
+            svg = self._generate(m.group(2), attrs)
+            idx = count
+            count += 1
+            if self.embedded:
+                return svg
+            return f'![fretty]({self._external_image(idx, svg)})'
+
+        return self._BLOCK.sub(replace, text)
+
+
+class OrgDocumentProcessor(DocumentProcessor):
+    _BLOCK = re.compile(r'#\+begin_src fretty([^\n]*)\n(.*?)#\+end_src', re.DOTALL | re.IGNORECASE)
+
+    @staticmethod
+    def _parse_attrs(attr_str):
+        return dict(re.findall(r':(\w+)\s+(\S+)', attr_str))
+
+    def _process(self, text):
+        count = 0
+
+        def replace(m):
+            nonlocal count
+            attrs = self._parse_attrs(m.group(1))
+            svg = self._generate(m.group(2), attrs)
+            idx = count
+            count += 1
+            if self.embedded:
+                return f'#+begin_export html\n{svg}\n#+end_export'
+            return f'[[file:{self._external_image(idx, svg)}]]'
+
+        return self._BLOCK.sub(replace, text)

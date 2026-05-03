@@ -1,13 +1,26 @@
 # -*- coding: utf-8 -*-
-from .processor import HTMLDoumentProcessor, XHTMLDoumentProcessor
+from .processor import HTMLDocumentProcessor, XHTMLDocumentProcessor, MarkdownDocumentProcessor, OrgDocumentProcessor
 
-__version__ = '0.2'
+__version__ = '0.3'
+
+
+def _auto_detect(input_file):
+    f = input_file.lower()
+    if f.endswith('.xhtml'):
+        return XHTMLDocumentProcessor
+    if f.endswith(('.html', '.htm')):
+        return HTMLDocumentProcessor
+    if f.endswith('.org'):
+        return OrgDocumentProcessor
+    return MarkdownDocumentProcessor
 
 
 _processors = {
-    'html': lambda _f: HTMLDoumentProcessor,
-    'xhtml': lambda _f: XHTMLDoumentProcessor,
-    'auto': lambda input_file: XHTMLDoumentProcessor if input_file.lower().endswith('.xhtml') else HTMLDoumentProcessor
+    'html':     lambda _f: HTMLDocumentProcessor,
+    'xhtml':    lambda _f: XHTMLDocumentProcessor,
+    'markdown': lambda _f: MarkdownDocumentProcessor,
+    'org':      lambda _f: OrgDocumentProcessor,
+    'auto':     _auto_detect,
 }
 
 
@@ -30,7 +43,10 @@ def main():
     args = parser.parse_args()
 
     processor_class = _processors[args.processor](args.input_file)
-    
+
+    if args.embed_svg and processor_class in (MarkdownDocumentProcessor, OrgDocumentProcessor):
+        parser.error("--embed-svg is not supported for markdown and org formats")
+
     if args.verbose:
         print(f"use processor: {processor_class.__name__}")
     
